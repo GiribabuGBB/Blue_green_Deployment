@@ -1,0 +1,16 @@
+How Rollback is Triggered
+Stage 5 saves current task def → /tmp/previous_task_def.txt
+         │
+         ▼
+Stage 6 Health Check fails (exit 1)
+         │
+         ▼
+post { failure } fires automatically
+         │
+         ├── Reads /tmp/previous_task_def.txt
+         ├── Reverts ECS service to previous task def
+         ├── Waits 60s for old container to start
+         └── Switches ALB back to previous version
+                  │
+                  ▼
+         Users never see the broken version ✅
